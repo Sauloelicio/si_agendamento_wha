@@ -396,6 +396,25 @@ export type Database = {
         Args: { _date: string; _id: string; _phone: string; _time: string }
         Returns: undefined
       }
+      tenant_book: {
+        Args: {
+          _business: string
+          _date: string
+          _name: string
+          _phone: string
+          _professional: string
+          _service: string
+          _time: string
+        }
+        Returns: string
+      }
+      tenant_occupied: {
+        Args: { _business: string; _date: string; _professional: string }
+        Returns: {
+          duration: number
+          time: string
+        }[]
+      }
     }
     Enums: {
       app_role: "admin"
