@@ -29,6 +29,13 @@
       "when": 1794281181370,
       "tag": "0003_saas_phase1_multitenant",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794282273817,
+      "tag": "0004_saas_owner_onboarding",
+      "breakpoints": true
     }
   ]
 }

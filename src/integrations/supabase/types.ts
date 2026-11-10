@@ -152,7 +152,10 @@ export type Database = {
           owner_id: string | null
           plan: string
           primary_color: string
+          segment: string
           slug: string
+          subscription_status: string
+          trial_ends_at: string | null
           whatsapp: string
         }
         Insert: {
@@ -162,7 +165,10 @@ export type Database = {
           owner_id?: string | null
           plan?: string
           primary_color?: string
+          segment?: string
           slug: string
+          subscription_status?: string
+          trial_ends_at?: string | null
           whatsapp: string
         }
         Update: {
@@ -172,7 +178,10 @@ export type Database = {
           owner_id?: string | null
           plan?: string
           primary_color?: string
+          segment?: string
           slug?: string
+          subscription_status?: string
+          trial_ends_at?: string | null
           whatsapp?: string
         }
         Relationships: []
@@ -215,29 +224,50 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          display_name: string
+          id: string
+        }
+        Insert: {
+          display_name?: string
+          id: string
+        }
+        Update: {
+          display_name?: string
+          id?: string
+        }
+        Relationships: []
+      }
       services: {
         Row: {
           active: boolean
           business_id: string
           created_at: string
+          duration_minutes: number
           id: string
           name: string
+          price_cents: number
           sort_order: number
         }
         Insert: {
           active?: boolean
           business_id?: string
           created_at?: string
+          duration_minutes?: number
           id?: string
           name: string
+          price_cents?: number
           sort_order?: number
         }
         Update: {
           active?: boolean
           business_id?: string
           created_at?: string
+          duration_minutes?: number
           id?: string
           name?: string
+          price_cents?: number
           sort_order?: number
         }
         Relationships: [
@@ -245,6 +275,47 @@ export type Database = {
             foreignKeyName: "services_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tenant_settings: {
+        Row: {
+          business_id: string
+          close_time: string
+          lunch_end: string | null
+          lunch_start: string | null
+          open_time: string
+          open_weekdays: number[]
+          service_minutes: number
+          slot_interval_minutes: number
+        }
+        Insert: {
+          business_id: string
+          close_time?: string
+          lunch_end?: string | null
+          lunch_start?: string | null
+          open_time?: string
+          open_weekdays?: number[]
+          service_minutes?: number
+          slot_interval_minutes?: number
+        }
+        Update: {
+          business_id?: string
+          close_time?: string
+          lunch_end?: string | null
+          lunch_start?: string | null
+          open_time?: string
+          open_weekdays?: number[]
+          service_minutes?: number
+          slot_interval_minutes?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_settings_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: true
             referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
@@ -287,6 +358,20 @@ export type Database = {
       cancel_appointment: {
         Args: { _id: string; _phone: string }
         Returns: undefined
+      }
+      create_business: {
+        Args: {
+          _close: string
+          _interval: number
+          _name: string
+          _open: string
+          _plan: string
+          _segment: string
+          _services: Json
+          _slug: string
+          _whatsapp: string
+        }
+        Returns: string
       }
       find_my_appointment: {
         Args: { _phone: string }
