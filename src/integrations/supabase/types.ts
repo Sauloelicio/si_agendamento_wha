@@ -16,57 +16,90 @@ export type Database = {
     Tables: {
       appointments: {
         Row: {
+          business_id: string
           client_name: string
           created_at: string
           date: string
           id: string
           phone: string
+          professional_id: string | null
           service: string
           status: string
           time: string
         }
         Insert: {
+          business_id?: string
           client_name: string
           created_at?: string
           date: string
           id?: string
           phone: string
+          professional_id?: string | null
           service: string
           status?: string
           time: string
         }
         Update: {
+          business_id?: string
           client_name?: string
           created_at?: string
           date?: string
           id?: string
           phone?: string
+          professional_id?: string | null
           service?: string
           status?: string
           time?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "appointments_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       blocked_dates: {
         Row: {
+          business_id: string
           created_at: string
           date: string
           id: string
         }
         Insert: {
+          business_id?: string
           created_at?: string
           date: string
           id?: string
         }
         Update: {
+          business_id?: string
           created_at?: string
           date?: string
           id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "blocked_dates_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       business_settings: {
         Row: {
+          business_id: string
           close_time: string
           id: number
           lunch_end: string | null
@@ -78,6 +111,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          business_id?: string
           close_time?: string
           id?: number
           lunch_end?: string | null
@@ -89,6 +123,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          business_id?: string
           close_time?: string
           id?: number
           lunch_end?: string | null
@@ -99,11 +134,91 @@ export type Database = {
           slot_interval_minutes?: number
           updated_at?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "business_settings_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      businesses: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          owner_id: string | null
+          plan: string
+          primary_color: string
+          slug: string
+          whatsapp: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          owner_id?: string | null
+          plan?: string
+          primary_color?: string
+          slug: string
+          whatsapp: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          owner_id?: string | null
+          plan?: string
+          primary_color?: string
+          slug?: string
+          whatsapp?: string
+        }
         Relationships: []
+      }
+      professionals: {
+        Row: {
+          active: boolean
+          business_id: string
+          created_at: string
+          id: string
+          name: string
+          phone: string | null
+          sort_order: number
+        }
+        Insert: {
+          active?: boolean
+          business_id: string
+          created_at?: string
+          id?: string
+          name: string
+          phone?: string | null
+          sort_order?: number
+        }
+        Update: {
+          active?: boolean
+          business_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+          phone?: string | null
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professionals_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       services: {
         Row: {
           active: boolean
+          business_id: string
           created_at: string
           id: string
           name: string
@@ -111,6 +226,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
+          business_id?: string
           created_at?: string
           id?: string
           name: string
@@ -118,12 +234,21 @@ export type Database = {
         }
         Update: {
           active?: boolean
+          business_id?: string
           created_at?: string
           id?: string
           name?: string
           sort_order?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "services_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -181,6 +306,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_business_owner: { Args: { _business_id: string }; Returns: boolean }
       reschedule_appointment: {
         Args: { _date: string; _id: string; _phone: string; _time: string }
         Returns: undefined
