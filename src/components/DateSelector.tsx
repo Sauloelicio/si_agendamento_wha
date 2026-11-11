@@ -8,13 +8,14 @@ import { ptBR } from "date-fns/locale";
 import { format } from "date-fns";
 import { useBusinessSettings } from '@/hooks/use-business-settings';
 import { supabase } from '@/integrations/supabase/client';
+import { LEGACY_ID } from '@/lib/saas';
 
 export const DateSelector = () => {
   const { scheduleData, setSelectedDate } = useSchedule();
   const settings = useBusinessSettings();
   const [blocked, setBlocked] = React.useState<string[]>([]);
   React.useEffect(() => {
-    supabase.from('blocked_dates').select('date').then(({ data }) => setBlocked((data || []).map((r) => r.date)));
+    supabase.from('blocked_dates').select('date').eq('business_id', LEGACY_ID).then(({ data }) => setBlocked((data || []).map((r) => r.date)));
   }, []);
 
   return (
