@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { useAvailableTimes } from '@/hooks/use-available-times';
+import { LEGACY_ID } from '@/lib/saas';
 
 type Appt = { id: string; client_name: string; phone: string; service: string; date: string; time: string };
 
@@ -14,7 +15,8 @@ const Mover = ({ a, onDone }: { a: Appt; onDone: () => void }) => {
   const [date, setDate] = useState<Date>();
   const { times } = useAvailableTimes(date);
   const move = async (time: string) => {
-    const { error } = await supabase.from('appointments').update({ date: format(date!, 'yyyy-MM-dd'), time }).eq('id', a.id);
+    if (!date) return;
+    const { error } = await supabase.from('appointments').update({ date: format(date, 'yyyy-MM-dd'), time }).eq('business_id', LEGACY_ID).eq('id', a.id);
     if (error) return toast.error(error.code === '23505' ? 'Horário já ocupado' : 'Erro ao remarcar');
     toast.success('Remarcado');
     onDone();
@@ -34,7 +36,7 @@ export const AppointmentsTab = () => {
   const key = format(day, 'yyyy-MM-dd');
 
   const load = async () => {
-    const { data } = await supabase.from('appointments').select('*').eq('date', key).eq('status', 'active').order('time');
+    const { data } = await supabase.from('appointments').select('*').eq('business_id', LEGACY_ID).eq('date', key).eq('status', 'active').order('time');
     setList((data as Appt[]) || []);
     setMoving(null);
   };
