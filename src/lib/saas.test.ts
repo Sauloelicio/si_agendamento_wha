@@ -1,3 +1,4 @@
+// @ts-expect-error bun test runner types
 import { describe, expect, it } from 'bun:test';
 import { PLANS, trialDays, freeSlots } from './saas';
 import { DEFAULT_SETTINGS } from './slots';

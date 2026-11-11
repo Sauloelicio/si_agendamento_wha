@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { Lock, LogOut, Trash2, ArrowLeft } from 'lucide-react';
 import { AppointmentsTab } from '@/components/AppointmentsTab';
 import { BusinessSettings, DEFAULT_SETTINGS, generateSlots, toMin } from '@/lib/slots';
+import { LEGACY_ID } from '@/lib/saas';
 
 const ADMIN_EMAIL = 'dona@juliananailsdesign.app';
 
@@ -116,8 +117,8 @@ const Dashboard = () => {
 
   const load = async () => {
     const [s, b] = await Promise.all([
-      supabase.from('services').select('*').order('sort_order'),
-      supabase.from('blocked_dates').select('date'),
+      supabase.from('services').select('*').eq('business_id', LEGACY_ID).order('sort_order'),
+      supabase.from('blocked_dates').select('date').eq('business_id', LEGACY_ID),
     ]);
     setServices((s.data as Service[]) || []);
     setBlocked((b.data || []).map((r) => r.date));
@@ -140,7 +141,7 @@ const Dashboard = () => {
     if (!d) return;
     const key = toKey(d);
     if (blocked.includes(key)) {
-      await supabase.from('blocked_dates').delete().eq('date', key);
+      await supabase.from('blocked_dates').delete().eq('business_id', LEGACY_ID).eq('date', key);
       toast.success('Dia liberado');
     } else {
       await supabase.from('blocked_dates').insert({ date: key });
@@ -210,7 +211,7 @@ const Admin = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-secondary to-background px-4 py-6">
       <div className="max-w-lg mx-auto flex justify-between items-center mb-4">
-        <Link to="/" className="text-sm text-muted-foreground flex items-center gap-1"><ArrowLeft className="h-4 w-4" />Site</Link>
+        <Link to="/laryssaresende-nails" className="text-sm text-muted-foreground flex items-center gap-1"><ArrowLeft className="h-4 w-4" />Site</Link>
         <h1 className="font-semibold text-foreground">Painel laryssaresende.nails</h1>
         {state === 'in' ? (
           <Button variant="ghost" size="icon" onClick={() => supabase.auth.signOut()}><LogOut className="h-4 w-4" /></Button>
